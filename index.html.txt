@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Budget Tracker</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- iPhone PWA Fullscreen -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="icon-256.png">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="app-root">
+    <h1>Budget Tracker</h1>
+
+    <!-- Currency selection -->
+    <div class="container">
+      <label for="currencySelect">Select Currency:</label>
+      <select id="currencySelect">
+        <option value="ZAR">South African Rand (ZAR)</option>
+        <option value="USD">US Dollar (USD)</option>
+        <option value="EUR">Euro (EUR)</option>
+      </select>
+    </div>
+
+    <!-- Month navigation -->
+    <div class="container" style="text-align:center;">
+      <button id="prevMonthBtn">&larr; Prev</button>
+      <span id="monthLabel" style="font-weight:bold; margin: 0 10px;"></span>
+      <button id="nextMonthBtn">Next &rarr;</button>
+      <button id="createNextMonthBtn" style="margin-left:10px;">Create Next Month</button>
+    </div>
+
+    <div class="container">
+      <h2>Starting Bank Balance</h2>
+      <input type="number" id="currentBalance" placeholder="Current bank balance (opening for this month)">
+      <div style="margin-top:8px; display:flex; gap:8px;">
+        <label style="flex:1">
+          Carry-over % (min 2%):
+          <input type="number" id="carryPercent" min="2" step="0.1" value="2" />
+        </label>
+        <label style="flex:1; align-self:end;">
+          <input type="checkbox" id="autoApplyDebits" /> Auto-apply monthly debits on month create
+        </label>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>Add Income</h2>
+      <input type="date" id="incomeDate" style="margin-top:6px;">
+      <input type="text" id="incomeSource" placeholder="Source">
+      <input type="number" id="incomeAmount" placeholder="Amount">
+      <button id="addIncomeBtn">Add Income</button>
+
+      <table id="incomeTable">
+        <tr><th>Date</th><th>Source</th><th>Amount</th><th>Action</th></tr>
+      </table>
+    </div>
+
+    <div class="container">
+      <h2>Add Expense</h2>
+      <input type="date" id="expenseDate" style="margin-top:6px;">
+      <input type="text" id="expenseCategory" placeholder="Category">
+      <input type="number" id="expenseBudget" placeholder="Budgeted Amount (optional)">
+      <input type="number" id="expenseActual" placeholder="Actual Amount">
+      <button id="addExpenseBtn">Add Expense</button>
+
+      <table id="expenseTable">
+        <tr><th>Date</th><th>Category</th><th>Budgeted</th><th>Actual</th><th>Action</th></tr>
+      </table>
+    </div>
+
+    <div class="container">
+      <h2>Monthly Fixed Debits</h2>
+      <input type="text" id="debitTitle" placeholder="Debit title (e.g., Phone)">
+      <input type="number" id="debitAmount" placeholder="Amount">
+      <input type="date" id="debitDate" placeholder="Day of month (optional)">
+      <button id="addDebitBtn">Add Monthly Debit</button>
+
+      <table id="debitsTable">
+        <tr><th>Day</th><th>Debit Title</th><th>Amount</th><th>Action</th></tr>
+      </table>
+    </div>
+
+    <div class="container">
+      <h2>Set-aside Savings Accounts</h2>
+      <input type="text" id="saveAccountName" placeholder="Account name">
+      <input type="number" id="saveAccountBalance" placeholder="Current balance (optional)">
+      <input type="number" id="saveAccountMonthly" placeholder="Monthly set-aside">
+      <input type="number" id="saveAccountInterest" placeholder="Annual interest % (optional)">
+      <button id="addSavingsAccountBtn">Add Savings Account</button>
+
+      <table id="savingsTable">
+        <tr><th>Account</th><th>Balance</th><th>Monthly</th><th>Interest %</th><th>Action</th></tr>
+      </table>
+    </div>
+
+    <div class="container">
+      <h2>Savings Goals</h2>
+      <input type="text" id="goalTitle" placeholder="Goal title (e.g., New laptop)">
+      <input type="number" id="goalTarget" placeholder="Target amount">
+      <input type="date" id="goalDeadline" placeholder="Deadline (optional)">
+      <input type="number" id="goalSaved" placeholder="Already saved (optional)">
+      <button id="addGoalBtn">Add Goal</button>
+
+      <div id="goalsList"></div>
+    </div>
+
+    <div class="container">
+      <h2>Summary</h2>
+      <p><strong>Total Income:</strong> <span id="totalIncome">0</span></p>
+      <p><strong>Total Actual Spend:</strong> <span id="totalExpenses">0</span></p>
+      <p><strong>Total Set-asides (savings accounts + goals):</strong> <span id="totalSetAsides">0</span></p>
+      <p><strong>Carry reserved:</strong> <span id="reservedCarry">0</span></p>
+      <p><strong>Money Left:</strong> <span id="moneyLeft">0</span></p>
+
+      <h3>Insights</h3>
+      <div id="insights"></div>
+
+      <div style="margin-top:12px; display:flex; gap:8px;">
+        <button id="exportPdfBtn">Export Monthly PDF</button>
+        <button id="exportCsvBtn">Export Monthly CSV</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- App script -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="app.js"></script>
+
+  <!-- Register Service Worker -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js").catch(err => console.warn("SW register failed", err));
+    }
+  </script>
+</body>
+</html>
